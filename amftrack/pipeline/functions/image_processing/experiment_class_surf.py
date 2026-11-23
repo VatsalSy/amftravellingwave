@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from amftrack.util.trusted_pickle import load_trusted_pickle
+from amftrack.util.trusted_pickle import dump_trusted_pickle, load_trusted_pickle
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
@@ -146,7 +146,7 @@ class Experiment:
             # print(path_save)
             g = self.nx_graph[i]
             pos = self.positions[i]
-            pickle.dump((g, pos), open(path_save, "wb"))
+            dump_trusted_pickle((g, pos), path_save)
 
     def save_mat(self):
         tabs_labeled = []
@@ -267,7 +267,7 @@ class Experiment:
             self.nodes.append(Node(label, self))
 
     def pickle_save(self, path):
-        pickle.dump(self, open(path + f"experiment.pick", "wb"))
+        dump_trusted_pickle(self, os.path.join(path, "experiment.pick"))
 
     def pickle_load(self, path):
         self = load_trusted_pickle(os.path.join(path, "experiment.pick"))
@@ -525,7 +525,7 @@ def save_graphs(exp, suf=2, ts=None):
                 # print(path_save)
                 g = exp.nx_graph[i]
                 pos = exp.positions[i]
-                pickle.dump((g, pos), open(path_save, "wb"))
+                dump_trusted_pickle((g, pos), path_save)
 
 
 def load_graphs(exp, directory, indexes=None, reload=True, post_process=False,suffix=""):

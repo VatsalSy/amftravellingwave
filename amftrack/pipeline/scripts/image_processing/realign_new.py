@@ -1,4 +1,5 @@
 import pickle
+from amftrack.util.trusted_pickle import dump_trusted_pickle
 import sys
 
 import networkx as nx
@@ -74,7 +75,7 @@ def process(args):
     directory_name = exp.folders["folder"].iloc[time]
     path_snap = directory + directory_name
     path_save = path_snap + "/Analysis/nx_graph_pruned_realigned.p"
-    pickle.dump((exp.nx_graph[time], pos), open(path_save, "wb"))
+    dump_trusted_pickle((exp.nx_graph[time], pos), path_save)
     sio.savemat(path_snap + "/Analysis/transform_final.mat", {"R": R0, "t": t0})
     skeleton = generate_skeleton(exp.nx_graph[time], (60000, 60000))
     skel = scipy.sparse.csc_matrix(skeleton, dtype=np.uint8)

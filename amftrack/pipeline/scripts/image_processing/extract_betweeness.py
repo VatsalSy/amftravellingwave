@@ -6,6 +6,7 @@ from amftrack.pipeline.functions.image_processing.experiment_class_surf import (
 )
 from amftrack.util.sys import temp_path
 import pickle
+from amftrack.util.trusted_pickle import dump_trusted_pickle
 import networkx as nx
 import pandas as pd
 from amftrack.pipeline.functions.post_processing.extract_study_zone import (
@@ -104,4 +105,4 @@ nx.set_edge_attributes(exp.nx_graph[t], final_betweeness, "betweenness")
 (G, pos) = exp.nx_graph[t], exp.positions[t]
 path_snap = directory + directory_name
 
-pickle.dump((G, pos), open(f"{path_snap}/Analysis/nx_graph_pruned_labeled.p", "wb"))
+dump_trusted_pickle((G, pos), f"{path_snap}/Analysis/nx_graph_pruned_labeled.p")

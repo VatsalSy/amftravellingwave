@@ -12,6 +12,7 @@ from amftrack.pipeline.functions.image_processing.extract_graph import (
 from amftrack.pipeline.functions.image_processing.node_id import remove_spurs
 import scipy.sparse
 import pickle
+from amftrack.util.trusted_pickle import dump_trusted_pickle
 import pandas as pd
 
 
@@ -40,7 +41,7 @@ def process(args):
     nx_graph_pruned = clean_degree_4(nx_graph, pos)[0]
     path_save = path_snap + "/Analysis/nx_graph_pruned.p"
     print(path_save)
-    pickle.dump((nx_graph_pruned, pos), open(path_save, "wb"))
+    dump_trusted_pickle((nx_graph_pruned, pos), path_save)
 
 
 if __name__ == "__main__":
