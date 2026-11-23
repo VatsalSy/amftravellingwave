@@ -9,7 +9,7 @@ import requests
 import re
 
 # create a ZipFile object
-from subprocess import call
+from subprocess import run
 from time import sleep
 from decouple import Config, RepositoryEnv
 from time import time_ns
@@ -239,9 +239,11 @@ def sync_fold(origin, target):
     """
     Launches a sync between two directory. Will only work on linux system.
     """
-    cmd = f"rsync --update -avh {origin} {target}"
-    # print(cmd)
-    call(cmd, shell=True)
+    # Both callers pass mounted local directories, not rsync remote specs.
+    source = os.path.abspath(origin)
+    if os.fspath(origin).endswith(os.sep) and not source.endswith(os.sep):
+        source += os.sep  # Preserve rsync's copy-the-contents semantics.
+    run(["rsync", "--update", "-avh", "--", source, os.path.abspath(target)], check=True)
 
 
 def get_dropbox_folders(dir_drop: str, skip_size: bool = True) -> pd.DataFrame:

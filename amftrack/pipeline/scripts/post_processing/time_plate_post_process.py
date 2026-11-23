@@ -7,6 +7,7 @@ from amftrack.pipeline.functions.image_processing.experiment_class_surf import (
 )
 
 import pickle
+from amftrack.util.trusted_pickle import load_trusted_pickle
 from amftrack.pipeline.functions.post_processing.extract_study_zone import (
     load_study_zone,
 )
@@ -31,7 +32,7 @@ if not os.path.isfile(f"{directory}{path_time_plate_info}") or overwrite:
 else:
     time_plate_info = json.load(open(f"{directory}{path_time_plate_info}", "r"))
 path_exp = f'{directory}{row["path_exp"]}'
-exp = pickle.load(open(path_exp, "rb"))
+exp = load_trusted_pickle(path_exp)
 exp.save_location = "/".join(path_exp.split("/")[:-1])
 try:
     exp.labeled

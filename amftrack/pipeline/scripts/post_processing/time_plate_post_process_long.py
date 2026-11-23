@@ -8,6 +8,7 @@ from amftrack.pipeline.functions.image_processing.experiment_class_surf import (
 )
 from amftrack.util.sys import temp_path
 import pickle
+from amftrack.util.trusted_pickle import load_trusted_pickle
 import pandas as pd
 import os
 import json
@@ -40,7 +41,7 @@ t = folder_list[i]
 select = run_info.loc[run_info["t"] == t]
 row = [row for index, row in select.iterrows()][0]
 path_exp = f'{directory}{row["path_exp"]}'
-exp = pickle.load(open(path_exp, "rb"))
+exp = load_trusted_pickle(path_exp)
 exp.save_location = "/".join(path_exp.split("/")[:-1])
 t = row["t"]
 try:

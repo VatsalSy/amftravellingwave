@@ -234,3 +234,24 @@ some of the functions of this repository.
 can be done with Spatio-temporal hypergraph. I advise to consult the following
 [library](https://github.com/amin942001/STHype/tree/hypergraph_class) where demo notebooks provide a good overview.
 - The **flow analysis** is currently being implemented in python. First releases will be posted here.
+
+
+## Loading legacy analysis pickles
+
+Graphs, saved experiments, analysis tables and cached hulls use Python pickle.
+Only use them if you trust the producer and have independently verified the
+exact bytes. An operator must put one verified SHA-256 digest per line in
+`~/.config/amftrack/trusted-pickles.sha256` on the machine that reads the files.
+On POSIX the file must be owned by the job user and accessible only to that user
+(mode `0600`). Do not put the manifest on the Dropbox or acquisition share, or
+approve digests supplied through the same channel as the files being checked.
+
+A missing manifest or an unapproved file stops analysis before deserialization.
+For existing datasets, verify them against a trusted original or regenerate them
+from trusted inputs and approve the resulting digests before restarting jobs.
+Pickles that AMFTrack writes itself (graphs, saved experiments, cached hulls)
+are approved as they are written, by the digest of the bytes the job serialized,
+so a pipeline run on one account needs no manual step between stages. Files that
+arrive any other way, including downloads from a share, are never enrolled
+automatically. Trusted pickles are still executable data;
+prefer data-only formats when exchanging results.

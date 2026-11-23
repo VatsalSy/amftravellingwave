@@ -1,5 +1,6 @@
 import os
 import pickle
+from amftrack.util.trusted_pickle import dump_trusted_pickle
 
 import numpy as np
 from scipy import sparse
@@ -50,7 +51,7 @@ def process(args):
         print("saving_graph")
         nx_graph_pruned = clean_degree_4(prune_graph(nx_graph, threshold), pos)[0]
         path_save = path_snap + "/Analysis/nx_graph_pruned.p"
-        pickle.dump((nx_graph_pruned, pos), open(path_save, "wb"))
+        dump_trusted_pickle((nx_graph_pruned, pos), path_save)
 
         shape_skel = skel.shape
         skeleton = generate_skeleton(

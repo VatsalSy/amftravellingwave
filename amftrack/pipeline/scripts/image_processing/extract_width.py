@@ -10,6 +10,7 @@ from amftrack.pipeline.functions.image_processing.experiment_class_surf import (
 )
 from amftrack.util.sys import temp_path
 import pickle
+from amftrack.util.trusted_pickle import dump_trusted_pickle
 import networkx as nx
 import pandas as pd
 
@@ -38,7 +39,7 @@ def process(args):
     edge_test = get_width_info_new(exp, 0, resolution=resolution, skip=skip)
     nx.set_edge_attributes(G, edge_test, "width")
     print(i, f"saving {path_snap}")
-    pickle.dump((G, pos), open(f"{path_snap}/Analysis/nx_graph_pruned_width.p", "wb"))
+    dump_trusted_pickle((G, pos), f"{path_snap}/Analysis/nx_graph_pruned_width.p")
 
 
 if __name__ == "__main__":
