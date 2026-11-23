@@ -10,6 +10,7 @@ from amftrack.pipeline.functions.image_processing.extract_graph import (
 import cv2
 import json
 import pandas as pd
+from amftrack.util.trusted_pickle import load_trusted_pickle
 from amftrack.util.dbx import download, upload, load_dbx, env_config
 from tqdm.autonotebook import tqdm
 from time import time_ns
@@ -732,11 +733,11 @@ def get_data_tables(op_id=time_ns(), redownload=True):
         path_save = f"{root}time_hypha_info{op_id}.pick"
         download(f"/{dir_drop}/time_hypha_infos.pick", path_save)
     path_save = f"{root}time_plate_infos{op_id}.pick"
-    time_plate_info = pd.read_pickle(path_save)
+    time_plate_info = load_trusted_pickle(path_save, loader=pd.read_pickle)
     path_save = f"{root}global_hypha_info{op_id}.pick"
-    global_hypha_info = pd.read_pickle(path_save)
+    global_hypha_info = load_trusted_pickle(path_save, loader=pd.read_pickle)
     path_save = f"{root}time_hypha_info{op_id}.pick"
-    time_hypha_info = pd.read_pickle(path_save)
+    time_hypha_info = load_trusted_pickle(path_save, loader=pd.read_pickle)
     return (time_plate_info, global_hypha_info, time_hypha_info)
 
 

@@ -1,8 +1,10 @@
 from datetime import datetime
-from subprocess import call, DEVNULL, check_output
+from subprocess import run, DEVNULL, check_output
 from typing import List
 from amftrack.util.sys import path_code, temp_path, slurm_path, slurm_path_transfer,conda_path
 import os
+import re
+from shlex import quote
 from copy import copy
 from time import time_ns
 import pickle
@@ -35,9 +37,9 @@ def call_code(path_job, dependency):
         sleep(120)
         len_queue = get_queue_size()
     if not dependency:
-        call(f"sbatch {path_job}", shell=True)
+        run(["sbatch", "--", path_job], check=True)
     else:
-        call(f"sbatch --dependency=singleton {path_job}", shell=True)
+        run(["sbatch", "--dependency=singleton", "--", path_job], check=True)
     sleep(1)
 
 
@@ -416,6 +418,10 @@ def run_parallel_transfer_to_archive(
     folders["unique_id"] = (
         folders["Plate"].astype(str) + "_" + folders["CrossDate"].astype(str)
     )
+    # Reject path separators and option-like identifiers before writing files.
+    for value in (*folders["folder"], *folders["unique_id"]):
+        if not isinstance(value, str) or re.fullmatch(r"[A-Za-z0-9_][A-Za-z0-9_.-]*", value) is None:
+            raise ValueError("Invalid archive folder or plate identifier")
     folder_list = list(folders["folder"])
     folder_list.sort()
     for directory_name in folder_list:
@@ -434,10 +440,12 @@ def run_parallel_transfer_to_archive(
         my_file.write(f'#SBATCH -o "{slurm_path}/{name}_{ide}.out" \n')
         my_file.write(f"source {os.path.join(conda_path,'etc/profile.d/conda.sh')}\n")
         my_file.write(f"conda activate amftrack\n")
-        my_file.write(
-            f"tar cvf /archive/cbisot/prince_data/{id_unique}.tar {folder}*\n"
-        )
+        archive = quote(f"/archive/cbisot/prince_data/{id_unique}.tar")
+        # Quote the entire data-derived prefix; only the trailing wildcard
+        # is shell syntax, and the option delimiter protects expanded names.
+        source_prefix = quote(os.path.abspath(folder))
+        my_file.write(f"tar -cvf {archive} -- {source_prefix}*\n")
         my_file.write("wait\n")
         my_file.close()
-        call(f"sbatch --dependency=singleton {path_job}", shell=True)
+        run(["sbatch", "--dependency=singleton", "--", path_job], check=True)
 

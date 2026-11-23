@@ -1,4 +1,5 @@
 import pickle
+from amftrack.util.trusted_pickle import load_trusted_pickle
 
 import networkx as nx
 import numpy as np
@@ -334,7 +335,7 @@ def get_regular_hulls(exp, ts, incrL):
         f"{np.sum(pd.util.hash_pandas_object(exp.folders.iloc[ts]))}.pick",
     )
     if os.path.isfile(path):
-        (regular_hulls, indexes) = pickle.load(open(path, "rb"))
+        (regular_hulls, indexes) = load_trusted_pickle(path)
     else:
         hulls = get_hulls(exp, ts)
         areas = [hull.area * 1.725**2 / (1000**2) for hull in hulls]
@@ -361,7 +362,7 @@ def get_regular_hulls_area_fixed(exp, ts, incr):
         f"{np.sum(pd.util.hash_pandas_object(exp.folders.iloc[ts]))}.pick",
     )
     if os.path.isfile(path):
-        (regular_hulls, indexes) = pickle.load(open(path, "rb"))
+        (regular_hulls, indexes) = load_trusted_pickle(path)
     else:
         hulls = get_hulls(exp, ts)
         areas = [np.sum(hull.area) * 1.725**2 / (1000**2) for hull in hulls]

@@ -8,6 +8,7 @@ from amftrack.pipeline.functions.image_processing.experiment_class_surf import (
 )
 from amftrack.util.sys import temp_path
 import pickle
+from amftrack.util.trusted_pickle import load_trusted_pickle
 import pandas as pd
 
 directory = str(sys.argv[1])
@@ -23,7 +24,7 @@ select = run_info.loc[run_info["folder_analysis"] == directory_name]
 row = [row for index, row in select.iterrows()][0]
 plate_num = row["Plate"]
 path_exp = f'{directory}{row["path_exp"]}'
-exp = pickle.load(open(path_exp, "rb"))
+exp = load_trusted_pickle(path_exp)
 exp.dates.sort()
 save_graphs(exp)
 exp.nx_graph = None

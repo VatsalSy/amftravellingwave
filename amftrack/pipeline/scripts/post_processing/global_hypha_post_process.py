@@ -8,6 +8,7 @@ from amftrack.pipeline.functions.image_processing.experiment_class_surf import (
 )
 from amftrack.util.sys import temp_path
 import pickle
+from amftrack.util.trusted_pickle import load_trusted_pickle
 import pandas as pd
 import os
 import json
@@ -35,7 +36,7 @@ else:
     global_hypha_info = json.load(open(f"{directory}{path_global_hypha_info}", "r"))
 # print(global_hypha_info)
 path_exp = f'{directory}{row["path_exp"]}'
-exp = pickle.load(open(path_exp, "rb"))
+exp = load_trusted_pickle(path_exp)
 exp.save_location = "/".join(path_exp.split("/")[:-1])
 try:
     exp.labeled

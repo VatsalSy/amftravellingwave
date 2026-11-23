@@ -4,6 +4,7 @@ import sys
 sys.path.insert(0, path_code_dir)
 from amftrack.util.sys import temp_path
 import pickle
+from amftrack.util.trusted_pickle import load_trusted_pickle
 import pandas as pd
 from amftrack.pipeline.functions.image_processing.experiment_class_surf import (
     load_graphs,
@@ -25,7 +26,7 @@ select = run_info.loc[run_info["folder_analysis"] == directory_name]
 row = [row for index, row in select.iterrows()][0]
 plate_num = row["Plate"]
 path_exp = f'{directory}{row["path_exp"]}'
-exp = pickle.load(open(path_exp, "rb"))
+exp = load_trusted_pickle(path_exp)
 exp.save_location = "/".join(path_exp.split("/")[:-1])
 try:
     exp.labeled

@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from amftrack.util.trusted_pickle import load_trusted_pickle
 import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
@@ -113,7 +114,7 @@ class Experiment:
             path_snap = os.path.join(self.directory, directory_name)
             file = os.path.join(f"Analysis", f"nx_graph_pruned{suffix}.p")
             path_save = os.path.join(path_snap, file)
-            (g, pos) = pickle.load(open(path_save, "rb"))
+            (g, pos) = load_trusted_pickle(path_save)
             nx_graph_poss.append((g, pos))
 
         nx_graphs = [nx_graph_pos[0] for nx_graph_pos in nx_graph_poss]
@@ -269,7 +270,7 @@ class Experiment:
         pickle.dump(self, open(path + f"experiment.pick", "wb"))
 
     def pickle_load(self, path):
-        self = pickle.load(open(path + f"experiment.pick", "rb"))
+        self = load_trusted_pickle(os.path.join(path, "experiment.pick"))
 
     def folder_name(self, i) -> str:
         "From the index of the timestep, return the name of the subdirectory"
@@ -546,7 +547,7 @@ def load_graphs(exp, directory, indexes=None, reload=True, post_process=False,su
             suffix = "/Analysis/nx_graph_pruned_labeled2.p"
         path_save = path_snap + suffix
         if (reload and index in indexes) or (exp.nx_graph is None):
-            (g, pos) = pickle.load(open(path_save, "rb"))
+            (g, pos) = load_trusted_pickle(path_save)
         else:
             (g, pos) = exp.nx_graph[index], exp.positions[index]
         if index in indexes:
