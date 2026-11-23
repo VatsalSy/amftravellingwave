@@ -1,5 +1,5 @@
 import pickle
-from amftrack.util.trusted_pickle import load_trusted_pickle
+from amftrack.util.trusted_pickle import dump_trusted_pickle, load_trusted_pickle
 
 import networkx as nx
 import numpy as np
@@ -349,7 +349,7 @@ def get_regular_hulls(exp, ts, incrL):
             indexes.append(index)
             current_area = (np.sqrt(current_area) + incrL) ** 2
             regular_hulls.append(hulls[index])
-        pickle.dump((regular_hulls, indexes), open(path, "wb"))
+        dump_trusted_pickle((regular_hulls, indexes), path)
 
     return (regular_hulls, indexes)
 
@@ -378,5 +378,5 @@ def get_regular_hulls_area_fixed(exp, ts, incr):
             indexes.append(index)
             regular_hulls.append(hulls[index])
 
-        pickle.dump((regular_hulls, indexes), open(path, "wb"))
+        dump_trusted_pickle((regular_hulls, indexes), path)
     return (regular_hulls, indexes)
